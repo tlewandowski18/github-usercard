@@ -82,8 +82,13 @@ axios
   .get('https://api.github.com/users/tlewandowski18/followers')
   .then((res) => {
     followerList = res.data
+    console.log(followerList)
     followerList.forEach(follower => {
-      cards.appendChild(createCard(follower));
+      axios
+      .get(`${follower.url}`)
+      .then(res => {
+        cards.appendChild(createCard(res.data))
+      })
     })
   }) 
 
@@ -123,7 +128,7 @@ function createCard(obj) {
   name.textContent = obj.name;
   username.textContent = obj.login;
   location.textContent = `Location: ${obj.location}`
-  profile.innerHTML = `Profile: <a href='${obj.html_url}'>${obj.html_url}</a>`;
+  profile.innerHTML = `Profile: <a href='${obj.html_url}' target='_blank'>${obj.html_url}</a>`;
   followers.textContent = `Followers: ${obj.followers}`;
   following.textContent = `Following: ${obj.following}`;
   bio.textContent = `Bio: ${obj.bio}`;
@@ -131,17 +136,3 @@ function createCard(obj) {
   return newCard;
 }
 
-/* <div class="card">
-  <img src={image url of user} />
-  <div class="card-info">
-    <h3 class="name">{users name}</h3>
-    <p class="username">{users user name}</p>
-    <p>Location: {users location}</p>
-    <p>Profile:  
-      <a href={address to users github page}>{address to users github page}</a>
-    </p>
-    <p>Followers: {users followers count}</p>
-    <p>Following: {users following count}</p>
-    <p>Bio: {users bio}</p>
-  </div>
-</div> */
