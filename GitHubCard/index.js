@@ -53,3 +53,86 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+const cards = document.querySelector('.cards');
+
+const instructorList = ['tetondan', 'dustinmyers', 'justsml', 'luishrd', 'bigknell']
+
+axios 
+  .get('https://api.github.com/users/tlewandowski18')
+  .then((res) => {
+    cards.appendChild(createCard(res.data));
+  })
+  .catch((err) => {
+    return `You have an error! ${err}`
+  })
+
+instructorList.forEach(instructor => {
+  axios 
+  .get(`https://api.github.com/users/${instructor}`)
+  .then((res) => {
+    cards.appendChild(createCard(res.data));
+  })
+  .catch((err) => {
+    return `You have an error! ${err}`
+  })
+})
+
+axios
+  .get('https://api.github.com/users/tlewandowski18/followers')
+  .then((res) => {
+    followerList = res.data
+    console.log(followerList)
+    followerList.forEach(follower => {
+      axios
+      .get(`${follower.url}`)
+      .then(res => {
+        cards.appendChild(createCard(res.data))
+      })
+    })
+  }) 
+
+function createCard(obj) {
+  const newCard = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const githubAddress = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  newCard.appendChild(cardImg);
+  newCard.appendChild(cardInfo);
+
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  profile.appendChild(githubAddress);
+
+  newCard.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+  cardImg.src = obj.avatar_url;
+
+  name.textContent = obj.name;
+  username.textContent = obj.login;
+  location.textContent = `Location: ${obj.location}`
+  profile.innerHTML = `Profile: <a href='${obj.html_url}' target='_blank'>${obj.html_url}</a>`;
+  followers.textContent = `Followers: ${obj.followers}`;
+  following.textContent = `Following: ${obj.following}`;
+  bio.textContent = `Bio: ${obj.bio}`;
+
+  return newCard;
+}
+
